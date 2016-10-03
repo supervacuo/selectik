@@ -100,7 +100,15 @@
             var html = '';
             for (var i = 0; i < this.$collection.length; i++){
                 var $this = $(this.$collection[i]);
-                html += '<li class="'+ ($this.attr('disabled') === 'disabled' ? 'disabled' : '') +'" data-value="'+$this[0].value+'">'+($this.data('selectik') ? $this.data('selectik') : $this[0].text)+'</li>';
+                if ($this.is('optgroup')) {
+                    html += '<li class="group disabled">' + $this[0].label + '</li>';
+                    $this.children().each(function(i, e) {
+                        var $e = $(e);
+                        html += '<li class="'+ ($e.attr('disabled') === 'disabled' ? 'disabled' : '') +'" data-value="'+$e[0].value+'">'+($e.data('selectik') ? $e.data('selectik') : $e[0].text)+'</li>';
+                    });
+                } else {
+                    html += '<li class="'+ ($this.attr('disabled') === 'disabled' ? 'disabled' : '') +'" data-value="'+$this[0].value+'">'+($this.data('selectik') ? $this.data('selectik') : $this[0].text)+'</li>';
+                }
             };
             return html;
         },
@@ -415,7 +423,7 @@
     $.fn.selectik = function(options, methods) {
         if (isMobile || isOperaMini) return;
         return this.each(function() {
-            if ($('optgroup', this).length > 0 || $(this).attr('multiple') == 'multiple') { return; }
+            if ($(this).attr('multiple') == 'multiple') { return; }
             if (undefined == $(this).data('selectik')) {
                 // create a new instance of the plugin
                 var selectik = new Selectik(options);
